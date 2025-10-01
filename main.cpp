@@ -1099,6 +1099,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     */
 
     // モデル読み込み
+ //   ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
     ModelData modelData = LoadObjFile("resources", "axis.obj");
   //  ModelData modelData = LoadObjFile("resources", "axis.obj");
     ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size()); // 頂点数分のサイズ
@@ -1270,11 +1271,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
             // 開発用UIの処理
             ImGui::ShowDemoWindow();
-
+            
             ImGui::Begin("Settings");
             ImGui::ColorEdit4("material", &materialData->x, ImGuiColorEditFlags_AlphaPreview);
             ImGui::DragFloat("rotate.y", &transform.rotate.y, 0.1f);
             ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
+            ImGui::SliderAngle("camerRotateX", &cameraTransform.rotate.x,0.1f);
+            ImGui::SliderAngle("camerRotateY", &cameraTransform.rotate.y, 0.1f);
             ImGui::DragFloat2("Sprite transform", &transformSprite.translate.x, 1.0f);
             ImGui::End();
 
