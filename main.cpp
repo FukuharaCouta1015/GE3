@@ -1099,9 +1099,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     */
 
     // モデル読み込み
- //   ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
-    ModelData modelData = LoadObjFile("resources", "axis.obj");
-  //  ModelData modelData = LoadObjFile("resources", "axis.obj");
+    ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
+   // ModelData modelData = LoadObjFile("resources", "axis.obj");
+
     ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size()); // 頂点数分のサイズ
 
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView {};
