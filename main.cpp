@@ -11,12 +11,17 @@
 #include <dxgidebug.h>
 #include <format>
 #include <string>
+#include "input.h"
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
 
 #include <fstream>
 #include <sstream>
@@ -27,7 +32,6 @@ struct Vector4 {
     float z;
     float w;
 };
-
 
 struct Vector2 {
     float x;
@@ -63,7 +67,6 @@ struct ModelData {
     std::vector<VertexData> vertices;
     MaterialData material;
 };
-
 
 // 単位行列
 Matrix4x4 MakeIdentity4x4()
@@ -330,6 +333,7 @@ ID3D12DescriptorHeap* CreateDescriptorHeap(
     descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
     assert(SUCCEEDED(hr));
+
     return descriptorHeap;
 }
 
@@ -492,8 +496,6 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 
     return modelData;
 }
-
-
 
 // ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -735,7 +737,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         uesAdapter = nullptr;
     }
     assert(uesAdapter != nullptr);
-
+    //  assert(false && "テスト");
     ID3D12Device* device = nullptr;
 
     D3D_FEATURE_LEVEL featureLevels[] = {
@@ -977,7 +979,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
     IDxcBlob* vertexShaderBlob = ComileShader(
-        L"Object3D.VS.hlsl",
+        L"Resources/shedrs/Object3D.VS.hlsl",
         L"vs_6_0",
         dxcUtils,
         dxcCompiler,
@@ -985,7 +987,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     assert(vertexShaderBlob != nullptr);
 
     IDxcBlob* pixelShaderBlob = ComileShader(
-        L"Object3D.PS.hlsl",
+        L"Resources/shedrs/Object3D.PS.hlsl",
         L"ps_6_0",
         dxcUtils,
         dxcCompiler,
@@ -1020,6 +1022,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         &graphicsPipelineStateDesc,
         IID_PPV_ARGS(&graphicsPipelineState));
     assert(SUCCEEDED(hr));
+
+    // ポインタ
+    Input* input = nullptr;
+
+    // 入力の初期化
+    input = new Input();
+    input->Initialize(wc.hInstance,hwnd);
+
+    // 入力の更新
+    input->Update();
+
+    // 解放
+    delete input;
 
     // 三角形 2個
     /*
@@ -1065,10 +1080,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     vertexData[5].position = { 0.5f, -0.5f, -0.5f, 1.0f };
     vertexData[5].texcoord = { 1.0f, 1.0f };
     */
+    
+    IDirectInput8* directInput = nullptr;
+    hr = DirectInput8Create(
+        wc.hInstance,
+        DIRECTINPUT_VERSION,
+        IID_IDirectInput8,
+        (void**)&directInput, nullptr);
+    assert(SUCCEEDED(hr));
+    
+
+    IDirectInputDevice8* keyboard = nullptr;
+    hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, nullptr);
+    assert(SUCCEEDED(hr));
+
+    hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
+    assert(SUCCEEDED(hr));
+
+    hr = keyboard->SetCooperativeLevel(
+        hwnd,
+        DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+    assert(SUCCEEDED(hr));
+    
 
     // モデル読み込み
     ModelData modelData = LoadObjFile("resources", "axis.obj");
-  //  ModelData modelData = LoadObjFile("resources", "axis.obj");
+    //  ModelData modelData = LoadObjFile("resources", "axis.obj");
     ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size()); // 頂点数分のサイズ
 
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView {};
@@ -1130,7 +1167,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     // Textureを読んで転送する
 
-   // DirectX::ScratchImage mipImages = LoadTexture("Resources/uvChecker.png");
+    // DirectX::ScratchImage mipImages = LoadTexture("Resources/uvChecker.png");
     DirectX::ScratchImage mipImages = LoadTexture(modelData.material.textureFilePath);
     const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
     ID3D12Resource* textureResource = CreateTextureResource(device, metadata);
@@ -1203,6 +1240,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     indexDataSprite[4] = 3; // 5つ目の頂点を参照
     indexDataSprite[5] = 2; // 6つ目の頂点を参照
 
+    BYTE key[256]{};
+    BYTE prekey[256]{};
+
     MSG msg {};
     // ウィンドウのxボタンが押されるまでループ
     while (msg.message != WM_QUIT) {
@@ -1214,6 +1254,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             DispatchMessage(&msg);
         } else {
             // ゲームの処理
+
+            keyboard->Acquire(); // キーボードの制御を取得
+            memcpy(prekey, key, 256);
+            keyboard->GetDeviceState(sizeof(key), key); // キーボードの入力状態を取得
+
+           /// if (key[DIK_SPACE] && !prekey[DIK_SPACE]){
+           //     OutputDebugStringA("Press SPACE \n");
+          //  }
+
+             if (input->PushKey(DIK_0)) {
+                    OutputDebugStringA("hit 0\n");
+             }
 
             Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
             Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
@@ -1335,7 +1387,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             assert(SUCCEEDED(hr));
 
             // ゲームの更新処理を行う
-            // ここにゲームの更新処理を書く
+            if (key[DIK_ESCAPE]) {
+                OutputDebugStringA("GAME Loop END \n");
+                break;  
+            }
         }
     }
 
