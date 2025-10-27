@@ -18,8 +18,6 @@ bool Input::PushKey(BYTE keyNumber)
 
 bool Input::TriggerKey(BYTE keyNumber)
 {
-   
-
     if (key[keyNumber] && !keyPre[keyNumber]) {
         return true;
     }
@@ -32,9 +30,9 @@ void Input::Update()
     // キーボードの入力状態を取得
     keyboard->Acquire();
 
-
-  
     keyboard->GetDeviceState(sizeof(key), key);
+
+    memcpy(keyPre, key, sizeof(key));
 
 }
 
@@ -42,7 +40,7 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 {
     HRESULT hr;
 
-    memcpy(keyPre, key, sizeof(key));
+    
 
     IDirectInput8* directInput = nullptr;
     hr = DirectInput8Create(
