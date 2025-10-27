@@ -27,12 +27,15 @@ bool Input::TriggerKey(BYTE keyNumber)
 
 void Input::Update()
 {
-    // キーボードの入力状態を取得
-    keyboard->Acquire();
-
-    keyboard->GetDeviceState(sizeof(key), key);
 
     memcpy(keyPre, key, sizeof(key));
+   
+    // キーボード情報の取得を開始
+    keyboard->Acquire();
+    // 全キーの入力状態を取得
+    keyboard->GetDeviceState(sizeof(key), key);
+
+ 
 
 }
 
