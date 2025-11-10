@@ -1033,9 +1033,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // 入力の更新
     input->Update();
 
-    // 解放
-    delete input;
-
+  
     // 三角形 2個
     /*
     ID3D12Resource* vertexResoursc = CreateBufferResource(device, sizeof(VertexData) * 6); // 3頂点分のサイズ
@@ -1081,27 +1079,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     vertexData[5].texcoord = { 1.0f, 1.0f };
     */
     
-    IDirectInput8* directInput = nullptr;
-    hr = DirectInput8Create(
-        wc.hInstance,
-        DIRECTINPUT_VERSION,
-        IID_IDirectInput8,
-        (void**)&directInput, nullptr);
-    assert(SUCCEEDED(hr));
-    
-
-    IDirectInputDevice8* keyboard = nullptr;
-    hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, nullptr);
-    assert(SUCCEEDED(hr));
-
-    hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
-    assert(SUCCEEDED(hr));
-
-    hr = keyboard->SetCooperativeLevel(
-        hwnd,
-        DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-    assert(SUCCEEDED(hr));
-    
+  
 
     // モデル読み込み
     ModelData modelData = LoadObjFile("resources", "axis.obj");
@@ -1240,9 +1218,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     indexDataSprite[4] = 3; // 5つ目の頂点を参照
     indexDataSprite[5] = 2; // 6つ目の頂点を参照
 
-    BYTE key[256]{};
-    BYTE prekey[256]{};
-
+   
     MSG msg {};
     // ウィンドウのxボタンが押されるまでループ
     while (msg.message != WM_QUIT) {
@@ -1255,13 +1231,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         } else {
             // ゲームの処理
 
-            keyboard->Acquire(); // キーボードの制御を取得
-            memcpy(prekey, key, 256);
-            keyboard->GetDeviceState(sizeof(key), key); // キーボードの入力状態を取得
-
-           /// if (key[DIK_SPACE] && !prekey[DIK_SPACE]){
-           //     OutputDebugStringA("Press SPACE \n");
-          //  }
+         input->Update();   
 
              if (input->PushKey(DIK_0)) {
                     OutputDebugStringA("hit 0\n");
@@ -1387,7 +1357,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             assert(SUCCEEDED(hr));
 
             // ゲームの更新処理を行う
-            if (key[DIK_ESCAPE]) {
+            if (input->TriggerKey(DIK_ESCAPE)) {
                 OutputDebugStringA("GAME Loop END \n");
                 break;  
             }
@@ -1450,6 +1420,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     }
 
     CoUninitialize();
+
+    // 解放
+    delete input;
 
     return 0;
 }
