@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <wrl.h>
+#include "WinApp.h"
 
 #define DIRECTINPUT_VERSION 0x0800
 
@@ -10,7 +11,7 @@
 class Input {
 public:
     void Update();
-    void Initialize(HINSTANCE hInstance, HWND hwnd);
+    void Initialize(WinApp* winApp);
    
     template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -19,6 +20,7 @@ public:
 
     private:
        
+        WinApp* winApp_ = nullptr;
         ComPtr<IDirectInputDevice8> keyboard;
         BYTE key[256] = {};
         BYTE keyPre[256] = {};

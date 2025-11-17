@@ -39,15 +39,15 @@ void Input::Update()
 
 }
 
-void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
+void Input::Initialize(WinApp* winApp)
 {
     HRESULT hr;
-
+    this->winApp_ = winApp;
     
 
     IDirectInput8* directInput = nullptr;
     hr = DirectInput8Create(
-        hInstance,
+        winApp->GetHinstance(),
         DIRECTINPUT_VERSION,
         IID_IDirectInput8,
         (void**)&directInput, nullptr);
@@ -60,7 +60,7 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
     hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
     assert(SUCCEEDED(hr));
 
-    hr = keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    hr = keyboard->SetCooperativeLevel(winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     assert(SUCCEEDED(hr));
 
 }
