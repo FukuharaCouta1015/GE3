@@ -13,6 +13,7 @@
 #include <dxgidebug.h>
 #include <format>
 #include <string>
+#include "DirectXCommon.h"
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
