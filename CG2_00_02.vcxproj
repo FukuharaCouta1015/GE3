@@ -141,10 +141,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imagui\imgui_tables.cpp" />
     <ClCompile Include="externals\imagui\imgui_widgets.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
+    <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="winApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +172,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imagui\imstb_textedit.h" />
     <ClInclude Include="externals\imagui\imstb_truetype.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="StringUtility.h" />
     <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <ItemGroup>

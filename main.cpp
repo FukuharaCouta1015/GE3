@@ -505,6 +505,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
         return true;
     }
+
     // メッセージに応じてゲーム固有の処理を行う
 
     switch (msg) {
@@ -591,6 +592,7 @@ IDxcBlob* CompileShader(
         includeHandler, // インクルードハンドラー
         IID_PPV_ARGS(&shaderResult));
     assert(SUCCEEDED(hr));
+
     IDxcBlobUtf8* shaderErrors = nullptr;
     shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderErrors), nullptr);
     if (shaderErrors != nullptr && shaderErrors->GetStringLength() != 0) {
@@ -680,6 +682,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // 入力の更新
     input->Update();
 
+    // ポインタ
+    DirectXCommon* dxCommon = nullptr;  
+    dxCommon = new DirectXCommon();
+    dxCommon->Initialize();
+
+
     /*
     WNDCLASS wc {};
     // ウィンドウプロシージャ
@@ -706,6 +714,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // クライアント領域を元に実際のサイズにwrcを変更してもらう
     AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
     */
+
 #ifdef _DEBUG
 
     ID3D12Debug1* debugController = nullptr;
@@ -757,6 +766,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         uesAdapter = nullptr;
     }
     assert(uesAdapter != nullptr);
+
     //  assert(false && "テスト");
     ID3D12Device* device = nullptr;
 
@@ -877,6 +887,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
     rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
     rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+
+
     // ディスクリプタの先頭を取得する
     D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
     // 2つ用意
@@ -1122,6 +1134,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     viewport.TopLeftX = 0.0f;
     viewport.TopLeftY = 0.0f;
 
+
+    //シザー矩形
     D3D12_RECT scissorRect {};
 
     scissorRect.left = 0;
@@ -1347,6 +1361,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         commandQueue->ExecuteCommandLists(1, commandLists);
         // GPUとosに画面の交換を行うように通知する
         swapChain->Present(1, 0);
+
         fenceValue++;
         commandQueue->Signal(fence, fenceValue);
 
@@ -1428,6 +1443,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // 解放
     delete input;
     delete winApp;
+    delete dxCommon;
 
     return 0;
 }
