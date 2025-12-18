@@ -685,7 +685,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // ポインタ
     DirectXCommon* dxCommon = nullptr;  
     dxCommon = new DirectXCommon();
-    dxCommon->Initialize();
+    dxCommon->Initialize(winApp);
 
 
     /*
