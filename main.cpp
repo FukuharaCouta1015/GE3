@@ -844,25 +844,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // コマンドリストの生成がうまくいかなかったので起動出来ない
     assert(SUCCEEDED(hr));
 
-    // スワップチェーンを生成する
-    IDXGISwapChain4* swapChain = nullptr;
-    DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
-    swapChainDesc.Width = WinApp::kClinetWidth; // 画面の幅,ウィンドウのクライアント領域を同じものにする
-    swapChainDesc.Height = WinApp::kClineHeigth; // 画面の高さ,ウィンドウのクライアント領域を同じものにする
-    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 画面の形式
-    swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
-    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
-    swapChainDesc.BufferCount = 2; // バッファの数
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // 　モニターにうつしたら中身を破棄
+    //// スワップチェーンを生成する
+    //IDXGISwapChain4* swapChain = nullptr;
+    //DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
+    //swapChainDesc.Width = WinApp::kClinetWidth; // 画面の幅,ウィンドウのクライアント領域を同じものにする
+    //swapChainDesc.Height = WinApp::kClineHeigth; // 画面の高さ,ウィンドウのクライアント領域を同じものにする
+    //swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 画面の形式
+    //swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
+    //swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
+    //swapChainDesc.BufferCount = 2; // バッファの数
+    //swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // 　モニターにうつしたら中身を破棄
 
-    hr = dxgiFactory->CreateSwapChainForHwnd(
-        commandQueue,
-        winApp->GetHwnd(),
-        &swapChainDesc,
-        nullptr,
-        nullptr,
-        reinterpret_cast<IDXGISwapChain1**>(&swapChain)); // スワップチェーンの取得
-    assert(SUCCEEDED(hr));
+    //hr = dxgiFactory->CreateSwapChainForHwnd(
+    //    commandQueue,
+    //    winApp->GetHwnd(),
+    //    &swapChainDesc,
+    //    nullptr,
+    //    nullptr,
+    //    reinterpret_cast<IDXGISwapChain1**>(&swapChain)); // スワップチェーンの取得
+    //assert(SUCCEEDED(hr));
 
     ID3D12DescriptorHeap* rtvDescriptorHeap = CreateDescriptorHeap(
         device,
@@ -876,12 +876,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         128,
         true); // シェーダーから使う
 
-    // SwapChainからResourceを取得する
-    ID3D12Resource* swapChainResources[2] = { nullptr };
-    hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
-    assert(SUCCEEDED(hr));
-    hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
-    assert(SUCCEEDED(hr));
+    //// SwapChainからResourceを取得する
+    //ID3D12Resource* swapChainResources[2] = { nullptr };
+    //hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
+    //assert(SUCCEEDED(hr));
+    //hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
+    //assert(SUCCEEDED(hr));
 
     // RTVの設定
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
@@ -889,17 +889,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 
 
-    // ディスクリプタの先頭を取得する
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    // 2つ用意
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
-    // 1つめを作る
-    rtvHandles[0] = rtvStartHandle;
-    device->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandles[0]);
-    // 2つめのディスクリプタハンドルを得る
-    rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    // 2つめを作る
-    device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
+    //// ディスクリプタの先頭を取得する
+    //D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    //// 2つ用意
+    //D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+    //// 1つめを作る
+    //rtvHandles[0] = rtvStartHandle;
+    //device->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandles[0]);
+    //// 2つめのディスクリプタハンドルを得る
+    //rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    //// 2つめを作る
+    //device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
 
     ID3D12Fence* fence = nullptr;
     uint64_t fenceValue = 0;
@@ -1135,26 +1135,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     viewport.TopLeftY = 0.0f;
 
 
-    //シザー矩形
-    D3D12_RECT scissorRect {};
+    ////シザー矩形
+    //D3D12_RECT scissorRect {};
 
-    scissorRect.left = 0;
-    scissorRect.top = 0;
-    scissorRect.right = WinApp::kClinetWidth;
-    scissorRect.bottom = WinApp::kClineHeigth;
+    //scissorRect.left = 0;
+    //scissorRect.top = 0;
+    //scissorRect.right = WinApp::kClinetWidth;
+    //scissorRect.bottom = WinApp::kClineHeigth;
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-    ImGui_ImplWin32_Init(winApp->GetHwnd());
-    ImGui_ImplDX12_Init(
-        device,
-        swapChainDesc.BufferCount, // スワップチェーンのバッファ数
-        rtvDesc.Format, // レンダーターゲットのフォーマップ
-        srvDescriptorHeap, // シェーダーリソースビュー用のディスクリプタヒープ
-        srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), // シェーダーリソースビュー用のCPU��ィスクリプタハンドル
-        srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart() // シェーダーリソースビュー用のGPUディスクリプタハンドル
-    );
+    //IMGUI_CHECKVERSION();
+    //ImGui::CreateContext();
+    //ImGui::StyleColorsDark();
+    //ImGui_ImplWin32_Init(winApp->GetHwnd());
+    //ImGui_ImplDX12_Init(
+    //    device,
+    //    swapChainDesc.BufferCount, // スワップチェーンのバッファ数
+    //    rtvDesc.Format, // レンダーターゲットのフォーマップ
+    //    srvDescriptorHeap, // シェーダーリソースビュー用のディスクリプタヒープ
+    //    srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), // シェーダーリソースビュー用のCPU��ィスクリプタハンドル
+    //    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart() // シェーダーリソースビュー用のGPUディスクリプタハンドル
+    //);
 
     ID3D12Resource* wvpResource = CreateBufferResource(device, sizeof(Matrix4x4));
     Matrix4x4* wvpData = nullptr;
@@ -1255,73 +1255,80 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             OutputDebugStringA("hit 0\n");
         }
 
-        Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+       /* Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
         Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
         Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClinetWidth), float(WinApp::kClineHeigth), 0.0f, 100.0f);
         Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
-        *transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
+        *transformationMatrixDataSprite = worldViewProjectionMatrixSprite;*/
 
         // transform.rotate.y += 0.03f;
         //   Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
         //  *wvpData = worldMatrix;
 
-        Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+       /* Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
         Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
         Matrix4x4 viewMatrix = Inverse(cameraMatrix);
         Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClinetWidth) / float(WinApp::kClineHeigth), 0.1f, 100.0f);
         Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-        *wvpData = worldViewProjectionMatrix;
+        *wvpData = worldViewProjectionMatrix;*/
 
-        ImGui_ImplDX12_NewFrame();
+     /*   ImGui_ImplDX12_NewFrame();
         ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
+        ImGui::NewFrame();*/
 
-        // 開発用UIの処理
-        ImGui::ShowDemoWindow();
+        //// 開発用UIの処理
+        //ImGui::ShowDemoWindow();
 
-        ImGui::Begin("Settings");
-        ImGui::ColorEdit4("material", &materialData->x, ImGuiColorEditFlags_AlphaPreview);
-        ImGui::DragFloat("rotate.y", &transform.rotate.y, 0.1f);
-        ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
-        ImGui::DragFloat2("Sprite transform", &transformSprite.translate.x, 1.0f);
-        ImGui::End();
+        //ImGui::Begin("Settings");
+        //ImGui::ColorEdit4("material", &materialData->x, ImGuiColorEditFlags_AlphaPreview);
+        //ImGui::DragFloat("rotate.y", &transform.rotate.y, 0.1f);
+        //ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
+        //ImGui::DragFloat2("Sprite transform", &transformSprite.translate.x, 1.0f);
+        //ImGui::End();
 
-        // ImGuiの内部コマンド
-        ImGui::Render();
+        //// ImGuiの内部コマンド
+        //ImGui::Render();
 
         // これから書き込むバックバファの禁書目録を取得
-        UINT backBufferindex = swapChain->GetCurrentBackBufferIndex();
+      /*  UINT backBufferindex = swapChain->GetCurrentBackBufferIndex();*/
 
-        // TransitionBarrierを作成する
-        D3D12_RESOURCE_BARRIER barrier {};
+        //// TransitionBarrierを作成する
+        //D3D12_RESOURCE_BARRIER barrier {};
 
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        //barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        //barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 
-        barrier.Transition.pResource = swapChainResources[backBufferindex];
+        //barrier.Transition.pResource = swapChainResources[backBufferindex];
 
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+        //barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        //barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
-        commandList->ResourceBarrier(1, &barrier);
+        //commandList->ResourceBarrier(1, &barrier);
+
+
+
+        // 描画前処理
+        dxCommon->PreDraw();
+
+
 
         // 　描画先のRTVを設定する
-        commandList->OMSetRenderTargets(1, &rtvHandles[backBufferindex], false, nullptr);
+       // commandList->OMSetRenderTargets(1, &rtvHandles[backBufferindex], false, nullptr);
         // 指定した色で画面全体をクリアする
         float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
-        commandList->ClearRenderTargetView(rtvHandles[backBufferindex], clearColor, 0, nullptr);
+        //commandList->ClearRenderTargetView(rtvHandles[backBufferindex], clearColor, 0, nullptr);
 
         D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-        commandList->OMSetRenderTargets(1, &rtvHandles[backBufferindex], false, &dsvHandle);
+       // commandList->OMSetRenderTargets(1, &rtvHandles[backBufferindex], false, &dsvHandle);
 
         ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap };
         commandList->SetDescriptorHeaps(1, descriptorHeaps);
         commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
         commandList->RSSetViewports(1, &viewport);
-        commandList->RSSetScissorRects(1, &scissorRect);
+       // commandList->RSSetScissorRects(1, &scissorRect);
         commandList->SetGraphicsRootSignature(rootSignature);
         commandList->SetPipelineState(graphicsPipelineState);
         commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -1330,27 +1337,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
         commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
         // commandList->DrawInstanced(6, 1, 0, 0);
-        commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+      //  commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
         // スプライト
 
-        commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
-        commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+        //commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+        //commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 
         // インデックスを指定
-        commandList->IASetIndexBuffer(&indexBufferViewSprite);
+        //commandList->IASetIndexBuffer(&indexBufferViewSprite);
 
         // ドローコール
         // commandList->DrawInstanced(6, 1, 0, 0);
 
-        commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+      //  commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
-        ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+        //ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+      //  barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+       // barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 
-        commandList->ResourceBarrier(1, &barrier);
+       // commandList->ResourceBarrier(1, &barrier);
 
         // コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
         hr = commandList->Close();
@@ -1360,7 +1367,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         ID3D12CommandList* commandLists[] = { commandList };
         commandQueue->ExecuteCommandLists(1, commandLists);
         // GPUとosに画面の交換を行うように通知する
-        swapChain->Present(1, 0);
+       // swapChain->Present(1, 0);
 
         fenceValue++;
         commandQueue->Signal(fence, fenceValue);
@@ -1380,6 +1387,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             OutputDebugStringA("GAME Loop END \n");
             break;
         }
+        dxCommon->PostDraw();
     }
 
     Log(ConvertString(std::format(L"-------------------------------WSTRING{}\n", L"abc")));
@@ -1401,9 +1409,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     srvDescriptorHeap->Release();
     fence->Release();
     rtvDescriptorHeap->Release();
-    swapChainResources[0]->Release();
-    swapChainResources[1]->Release();
-    swapChain->Release();
+   // swapChainResources[0]->Release();
+    //swapChainResources[1]->Release();
+    //swapChain->Release();
     commandList->Release();
     commandAllocator->Release();
     commandQueue->Release();

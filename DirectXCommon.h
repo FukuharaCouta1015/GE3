@@ -4,8 +4,8 @@
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <dxgi1_6.h>
-#include <wrl.h>
 #include <string>
+#include <wrl.h>
 
 class DirectXCommon {
 public:
@@ -23,6 +23,9 @@ public:
 
     D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
+    void PreDraw();
+    void PostDraw();
+
 private:
     void CreateDevice();
     void CreateCommand();
@@ -38,7 +41,7 @@ private:
 
     // ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
-    ID3D12Resource* CreateDepthBuffer();
+    void CreateDepthBuffer();
 
     Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
@@ -58,7 +61,7 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
 
-    //Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
+    // Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
 
     Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
@@ -69,19 +72,20 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;
 
     Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils_ = nullptr;
-    Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler_=nullptr;
-    
+    Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
+
     Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_;
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = nullptr;
-
-    Microsoft::WRL::ComPtr<D3D12_RECT> scissorRect = nullptr;
-
+    uint64_t fenceValue = 0;
+    HANDLE fenceEvent = nullptr;
+    D3D12_VIEWPORT viewport {};
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
-
+    // シザー矩形
+    D3D12_RECT scissorRect {};
     WinApp* winApp = nullptr;
 
     UINT descriptorSizeSRV = 0;

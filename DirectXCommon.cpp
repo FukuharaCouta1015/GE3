@@ -72,20 +72,20 @@ void DirectXCommon::Initialize(WinApp* winApp)
     CreateRTV();
 
     //// RTVの設定
-    //D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
-    //rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
-    //rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+    // D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
+    // rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
+    // rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
     //// ディスクリプタの先頭を取得する
-    //D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    // D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
     //// 2つ用意
-    //D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+    // D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
     //// 1つめを作る
-    //rtvHandles[0] = rtvStartHandle;
-    //device_->CreateRenderTargetView(swapChainResources[0].Get(), &rtvDesc, rtvHandles[0]);
+    // rtvHandles[0] = rtvStartHandle;
+    // device_->CreateRenderTargetView(swapChainResources[0].Get(), &rtvDesc, rtvHandles[0]);
     //// 2つめのディスクリプタハンドルを得る
-    //rtvHandles[1].ptr = rtvHandles[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    // rtvHandles[1].ptr = rtvHandles[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     //// 2つめを作る
-    //device_->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandles[1]);
+    // device_->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandles[1]);
 
     // Fenceの生成
     CreateFence();
@@ -141,7 +141,85 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetDSVGPUDescriptorHandle(uint32_t in
     return GetGPUDescriptorHandle(dsvDescriptorHeap, descriptorSizeDSV, index);
 }
 
-// つづき　↑の3つめを書く
+void DirectXCommon::PreDraw()
+{
+    // これから書き込むバックバファの番号を取得
+    UINT backBufferindex = swapChain_->GetCurrentBackBufferIndex();
+    // リソースバリアで書き込み可能に変更
+    D3D12_RESOURCE_BARRIER barrier {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = swapChainResources[backBufferindex].Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    commandList_->ResourceBarrier(1, &barrier);
+    // 描画先のRTVを設定する
+    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    commandList_->OMSetRenderTargets(1, &rtvHandles[backBufferindex], false, &dsvHandle);
+
+    float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f }; // 青っぽい色
+
+    // 指定した色で画面全体をクリアする
+    commandList_->ClearRenderTargetView(rtvHandles[backBufferindex], clearColor, 0, nullptr);
+    commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+    // SRVディスクリプターヒープをセット
+    ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.Get() };
+    commandList_->SetDescriptorHeaps(1, descriptorHeaps);
+
+    //ビューポート領域の設定
+    commandList_->RSSetViewports(1, &viewport);
+    // シザー矩形の設定
+    commandList_->RSSetScissorRects(1, &scissorRect);
+
+}
+
+void DirectXCommon::PostDraw()
+{
+
+    // これから書き込むバックバファの番号を取得
+    UINT backBufferindex = swapChain_->GetCurrentBackBufferIndex();
+
+
+
+    //リソースバリアでプレゼント可能に変更
+    D3D12_RESOURCE_BARRIER barrier {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = swapChainResources[backBufferindex].Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    commandList_->ResourceBarrier(1, &barrier);
+
+
+    hr = commandList_->Close();
+    assert(SUCCEEDED(hr));
+
+    // GPUコマンドの実行
+    // GPUにコマンドリストの実行を行わせる
+    ID3D12CommandList* commandLists[] = { commandList_.Get() };
+    commandQueue_->ExecuteCommandLists(_countof(commandLists), commandLists);
+
+    swapChain_->Present(1, 0); // 画面に表示する
+    assert(SUCCEEDED(hr));
+
+    // フェンスの値を更新
+    fenceValue++;
+    // コマンドキューにシグナルを送ります。
+    commandQueue_->Signal(fence_.Get(), fenceValue);
+    //コマンド完了待ち
+    if (fence_->GetCompletedValue() < fenceValue) {
+        fence_->SetEventOnCompletion(fenceValue, fenceEvent);
+        WaitForSingleObject(fenceEvent, INFINITE);
+    }
+
+    hr = commandAllocator_->Reset();
+    assert(SUCCEEDED(hr));
+    hr = commandList_->Reset(commandAllocator_.Get(), nullptr);
+    assert(SUCCEEDED(hr));
+}
+
+
 
 void DirectXCommon::CreateDevice()
 {
@@ -314,15 +392,12 @@ void DirectXCommon::CreateRTV()
         device_->CreateRenderTargetView(swapChainResources[i].Get(), &rtvDesc, rtvHandles[i]);
 
         // 次のディスクリプタ位置に進める
-        rtvStartHandle.ptr += descriptorSizeDSV;
+        rtvStartHandle.ptr += descriptorSizeRTV;
     }
 }
 
 void DirectXCommon::CreateScissoring()
 {
-
-    // シザー矩形
-    D3D12_RECT scissorRect {};
 
     scissorRect.left = 0;
     scissorRect.top = 0;
@@ -333,7 +408,7 @@ void DirectXCommon::CreateScissoring()
 void DirectXCommon::CreateFence()
 {
 
-    uint64_t fenceValue = 0;
+
     hr = device_->CreateFence(
         fenceValue,
         D3D12_FENCE_FLAG_NONE,
@@ -346,7 +421,6 @@ void DirectXCommon::CreateFence()
 
 void DirectXCommon::CreateViewport()
 {
-    D3D12_VIEWPORT viewport {};
 
     viewport.Width = WinApp::kClinetWidth;
 
@@ -525,7 +599,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap
 }
 
 // 震度バッファの初期化
-ID3D12Resource* DirectXCommon::CreateDepthBuffer()
+void DirectXCommon::CreateDepthBuffer()
 {
 
     D3D12_RESOURCE_DESC resourceDesc {};
@@ -553,7 +627,6 @@ ID3D12Resource* DirectXCommon::CreateDepthBuffer()
         &resourceDesc,
         D3D12_RESOURCE_STATE_DEPTH_WRITE, // 深度書き込み用の初期状態
         &depthClearValue, // 深度値のクリア設定
-        IID_PPV_ARGS(&resource));
+        IID_PPV_ARGS(&depthResource_));
     assert(SUCCEEDED(hr));
-    return resource;
 }
