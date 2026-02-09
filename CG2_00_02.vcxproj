@@ -69,6 +69,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\io;$(ProjectDir)engine\scene;$(ProjectDir)engine\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,6 +93,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\io;$(ProjectDir)engine\scene;$(ProjectDir)engine\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\io;$(ProjectDir)engine\scene;$(ProjectDir)engine\base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +135,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXCommon.cpp" />
+    <ClCompile Include="engine\base\DirectXCommon.cpp" />
     <ClCompile Include="externals\imagui\imgui.cpp" />
     <ClCompile Include="externals\imagui\imgui_demo.cpp" />
     <ClCompile Include="externals\imagui\imgui_draw.cpp" />
@@ -140,14 +143,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imagui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imagui\imgui_tables.cpp" />
     <ClCompile Include="externals\imagui\imgui_widgets.cpp" />
-    <ClCompile Include="input.cpp" />
-    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="engine\io\input.cpp" />
+    <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="main.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
-    <ClCompile Include="StringUtility.cpp" />
-    <ClCompile Include="winApp.cpp" />
+    <ClCompile Include="engine\base\StringUtility.cpp" />
+    <ClCompile Include="engine\base\winApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shedrs\Object3d.PS.hlsl">
@@ -162,7 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXCommon.h" />
+    <ClInclude Include="engine\base\DirectXCommon.h" />
     <ClInclude Include="externals\imagui\imconfig.h" />
     <ClInclude Include="externals\imagui\imgui.h" />
     <ClInclude Include="externals\imagui\imgui_impl_dx12.h" />
@@ -171,10 +174,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imagui\imstb_rectpack.h" />
     <ClInclude Include="externals\imagui\imstb_textedit.h" />
     <ClInclude Include="externals\imagui\imstb_truetype.h" />
-    <ClInclude Include="input.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="StringUtility.h" />
-    <ClInclude Include="WinApp.h" />
+    <ClInclude Include="engine\io\input.h" />
+    <ClInclude Include="engine\base\Logger.h" />
+    <ClInclude Include="engine\base\StringUtility.h" />
+    <ClInclude Include="engine\base\WinApp.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imagui\LICENSE.txt" />

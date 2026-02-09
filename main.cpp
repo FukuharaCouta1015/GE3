@@ -1,10 +1,10 @@
 #include "DirectXCommon.h"
 #include "WinApp.h"
+#include "engine/io/input.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/imagui/imgui.h"
 #include "externals/imagui/imgui_impl_dx12.h"
 #include "externals/imagui/imgui_impl_win32.h"
-#include "input.h"
 #include <Windows.h>
 #include <cassert>
 #include <cstdint>
@@ -815,33 +815,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     Log(ConvertString(std::format(L"-------------------------------WSTRING{}\n", L"abc")));
 
-    // コマンドキューを生成する
-    ID3D12CommandQueue* commandQueue = nullptr;
-    D3D12_COMMAND_QUEUE_DESC commandQueueDesc {};
-    hr = device->CreateCommandQueue(&commandQueueDesc,
-        IID_PPV_ARGS(&commandQueue));
+    //// コマンドキューを生成する
+    // ID3D12CommandQueue* commandQueue = nullptr;
+    // D3D12_COMMAND_QUEUE_DESC commandQueueDesc {};
+    // hr = device->CreateCommandQueue(&commandQueueDesc,
+    //     IID_PPV_ARGS(&commandQueue));
 
-    assert(SUCCEEDED(hr));
+    // assert(SUCCEEDED(hr));
 
-    // コマンドアロケータを生成する
-    ID3D12CommandAllocator* commandAllocator = nullptr;
-    hr = device->CreateCommandAllocator(
-        D3D12_COMMAND_LIST_TYPE_DIRECT,
-        IID_PPV_ARGS(&commandAllocator));
-    // コマンドアロケータの生成がうまくいかなかったので起動出来ない
-    assert(SUCCEEDED(hr));
+    ////// コマンドアロケータを生成する
+    // ID3D12CommandAllocator* commandAllocator = nullptr;
+    // hr = device->CreateCommandAllocator(
+    //     D3D12_COMMAND_LIST_TYPE_DIRECT,
+    //     IID_PPV_ARGS(&commandAllocator));
+    //// コマンドアロケータの生成がうまくいかなかったので起動出来ない
+    // assert(SUCCEEDED(hr));
 
     // コマンドリストを生成する
 
-    ID3D12GraphicsCommandList* commandList = nullptr;
-    hr = device->CreateCommandList(
-        0,
-        D3D12_COMMAND_LIST_TYPE_DIRECT,
-        commandAllocator,
-        nullptr,
-        IID_PPV_ARGS(&commandList));
-    // コマンドリストの生成がうまくいかなかったので起動出来ない
-    assert(SUCCEEDED(hr));
+    // ID3D12GraphicsCommandList* commandList = nullptr;
+    // hr = device->CreateCommandList(
+    //     0,
+    //     D3D12_COMMAND_LIST_TYPE_DIRECT,
+    //     commandAllocator,
+    //     nullptr,
+    //     IID_PPV_ARGS(&commandList));
+    //// コマンドリストの生成がうまくいかなかったので起動出来ない
+    // assert(SUCCEEDED(hr));
 
     //// スワップチェーンを生成する
     // IDXGISwapChain4* swapChain = nullptr;
@@ -882,10 +882,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
     // assert(SUCCEEDED(hr));
 
-    // RTVの設定
-    D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
-    rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
-    rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+    //// RTVの設定
+    // D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
+    // rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
+    // rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 
     //// ディスクリプタの先頭を取得する
     // D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -899,7 +899,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //// 2つめを作る
     // device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
 
-    ID3D12Fence* fence = nullptr;
+    /*ID3D12Fence* fence = nullptr;
     uint64_t fenceValue = 0;
     hr = device->CreateFence(
         fenceValue,
@@ -908,7 +908,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     assert(SUCCEEDED(hr));
     HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    assert(fenceEvent != nullptr);
+    assert(fenceEvent != nullptr);*/
 
     // dxcComilerを初期化する
     IDxcUtils* dxcUtils = nullptr;
@@ -1088,7 +1088,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     // モデル読み込み
     ModelData modelData = LoadObjFile("resources", "axis.obj");
-    //  ModelData modelData = LoadObjFile("resources", "axis.obj");
+
     Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = dxCommon->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size()); // 頂点数分のサイズ
 
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView {};
@@ -1163,11 +1163,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
     srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels); // 最初のミップマップレベル
 
-    D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
 
-    textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxCommon->GetSRVCPUDescriptorHandle(1);
+    D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxCommon->GetSRVGPUDescriptorHandle(1);
+
+   // textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+ //   textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     // テクスチャのシェーダーリソースビューを作成する
 
@@ -1301,24 +1302,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         // float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
         // commandList->ClearRenderTargetView(rtvHandles[backBufferindex], clearColor, 0, nullptr);
 
-        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+        // D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
         // commandList->OMSetRenderTargets(1, &rtvHandles[backBufferindex], false, &dsvHandle);
 
-        ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap };
+        /*ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap };
         commandList->SetDescriptorHeaps(1, descriptorHeaps);
         commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-        commandList->RSSetViewports(1, &viewport);
+        commandList->RSSetViewports(1, &viewport);*/
         // commandList->RSSetScissorRects(1, &scissorRect);
-        commandList->SetGraphicsRootSignature(rootSignature);
-        commandList->SetPipelineState(graphicsPipelineState);
-        commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-        commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-        commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-        commandList->DrawInstanced(6, 1, 0, 0);
-        commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+        dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature);
+        dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState);
+
+        dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+        dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+        dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+        dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+        // commandList->DrawInstanced(6, 1, 0, 0);
+        dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
         // スプライト
 
@@ -1341,40 +1344,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         // commandList->ResourceBarrier(1, &barrier);
 
         // コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
-        hr = commandList->Close();
+        // hr = commandList->Close();
 
-        assert(SUCCEEDED(hr));
-        // GPUにコマンドリストを実行させる
-        ID3D12CommandList* commandLists[] = { commandList };
-        commandQueue->ExecuteCommandLists(1, commandLists);
-        // GPUとosに画面の交換を行うように通知する
-        // swapChain->Present(1, 0);
+        // assert(SUCCEEDED(hr));
+        //// GPUにコマンドリストを実行させる
+        // ID3D12CommandList* commandLists[] = { commandList };
+        // commandQueue->ExecuteCommandLists(1, commandLists);
+        //  GPUとosに画面の交換を行うように通知する
+        //  swapChain->Present(1, 0);
 
-        fenceValue++;
-        commandQueue->Signal(fence, fenceValue);
+        // fenceValue++;
+        // commandQueue->Signal(fence, fenceValue);
 
-        if (fence->GetCompletedValue() < fenceValue) {
-            fence->SetEventOnCompletion(fenceValue, fenceEvent);
-            WaitForSingleObject(fenceEvent, INFINITE);
-        }
-        // 次のフレーム用のコマンドリストを準備
-        hr = commandAllocator->Reset();
-        assert(SUCCEEDED(hr));
-        hr = commandList->Reset(commandAllocator, nullptr);
-        assert(SUCCEEDED(hr));
+        // if (fence->GetCompletedValue() < fenceValue) {
+        //     fence->SetEventOnCompletion(fenceValue, fenceEvent);
+        //     WaitForSingleObject(fenceEvent, INFINITE);
+        // }
+        //// 次のフレーム用のコマンドリストを準備
+        // hr = commandAllocator->Reset();
+        // assert(SUCCEEDED(hr));
+        // hr = commandList->Reset(commandAllocator, nullptr);
+        // assert(SUCCEEDED(hr));
+
+        dxCommon->PostDraw();
 
         // ゲームの更新処理を行う
         if (input->TriggerKey(DIK_ESCAPE)) {
             OutputDebugStringA("GAME Loop END \n");
             break;
         }
-        dxCommon->PostDraw();
     }
 
     Log(ConvertString(std::format(L"-------------------------------WSTRING{}\n", L"abc")));
 
     // 解放処理
-    CloseHandle(fenceEvent);
+    // CloseHandle(fenceEvent);
 
     ImGui_ImplDX12_Shutdown();
     ImGui_ImplWin32_Shutdown();
@@ -1388,14 +1392,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     textureResource->Release();
     wvpResource->Release();
     srvDescriptorHeap->Release();
-    fence->Release();
+    // fence->Release();
     rtvDescriptorHeap->Release();
     // swapChainResources[0]->Release();
     // swapChainResources[1]->Release();
     // swapChain->Release();
-    commandList->Release();
-    commandAllocator->Release();
-    commandQueue->Release();
+    // commandList->Release();
+    // commandAllocator->Release();
+    // commandQueue->Release();
     device->Release();
     uesAdapter->Release();
     dxgiFactory->Release();

@@ -16,9 +16,13 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 
+
+
 class DirectXCommon {
 public:
     void Initialize(WinApp* winApp);
+
+  //  static DirectXCommon* GetInstance();
 
     static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t index, uint32_t descriptorSize);
 

@@ -102,6 +102,12 @@ void DirectXCommon::Initialize(WinApp* winApp)
     CreateImGui();
 }
 
+//DirectXCommon* DirectXCommon::GetInstance()
+//{
+//    static DirectXCommon instance;
+//    return &instance;
+//}
+
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t index, uint32_t descriptorSize)
 {
     D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
