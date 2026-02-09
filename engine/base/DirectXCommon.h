@@ -8,6 +8,8 @@
 #include <string>
 #include <wrl.h>
 #include <iostream>
+#include <chrono>
+
 
 #pragma comment(lib, "dxcompiler.lib")
 #pragma comment(lib, "d3d12.lib")
@@ -58,11 +60,16 @@ private:
     void CreateDXC();
     void CreateImGui();
 
+    std::chrono::steady_clock::time_point reference_;
+
     // ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
     void CreateDepthBuffer();
 
-   
+    void InitializeFixFPS();
+
+    void UpdateFixFPS();
+
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
     Microsoft::WRL::ComPtr<ID3D12Device> device_ = nullptr;

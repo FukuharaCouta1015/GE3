@@ -8,6 +8,7 @@
 #include <cassert>
 #include <format>
 #include <string>
+#include <thread>
 #include "externals/DirectXTex/DirectXTex.h"
 #pragma comment(lib, "d3d12.lib")
 
@@ -19,6 +20,8 @@ HRESULT hr = S_OK;
 
 void DirectXCommon::Initialize(WinApp* winApp)
 {
+
+    InitializeFixFPS();
 
     assert(winApp);
     this->winApp = winApp;
@@ -182,6 +185,7 @@ void DirectXCommon::PreDraw()
 void DirectXCommon::PostDraw()
 {
 
+
     // これから書き込むバックバファの番号を取得
     UINT backBufferindex = swapChain_->GetCurrentBackBufferIndex();
 
@@ -217,6 +221,8 @@ void DirectXCommon::PostDraw()
         fence_->SetEventOnCompletion(fenceValue, fenceEvent);
         WaitForSingleObject(fenceEvent, INFINITE);
     }
+
+    UpdateFixFPS();
 
     hr = commandAllocator_->Reset();
     assert(SUCCEEDED(hr));
@@ -729,3 +735,31 @@ void DirectXCommon::CreateDepthBuffer()
         IID_PPV_ARGS(&depthResource_));
     assert(SUCCEEDED(hr));
 }
+
+void DirectXCommon::InitializeFixFPS()
+{
+    reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::UpdateFixFPS()
+{
+    const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+    const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+
+    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    // 前回記録からの経過時間を取得する
+    std::chrono::microseconds elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+
+    // 1/60秒（よりわずかな時間）経っていない場合
+    if (elapsed < kMinTime) {
+        // 1/60秒経過するまで短いスリープを繰り返す
+        while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
+            // マイクロ秒スリープ
+            std::this_thread::sleep_for(std::chrono::microseconds(1));
+        }
+    }
+
+    // 現在の時間を記録する
+    reference_ = std::chrono::steady_clock::now();
+}
+

@@ -809,7 +809,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         infoQueue->PushStorageFilter(&filter);
 
-        infoQueue->Release();
+       // infoQueue->Release();
     }
 #endif
 
@@ -1164,6 +1164,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels); // 最初のミップマップレベル
 
 
+    
+
     D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxCommon->GetSRVCPUDescriptorHandle(1);
     D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxCommon->GetSRVGPUDescriptorHandle(1);
 
@@ -1384,25 +1386,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
-    indexResourceSprite->Release();
+   // indexResourceSprite->Release();
     transformationMatrixResourceSprite->Release();
     vertexResourceSprite->Release();
-    dsvDescriptorHeap->Release();
+  //  dsvDescriptorHeap->Release();
     depthStencilResource->Release();
-    textureResource->Release();
+//    textureResource->Release();
     wvpResource->Release();
-    srvDescriptorHeap->Release();
+   // srvDescriptorHeap->Release();
     // fence->Release();
-    rtvDescriptorHeap->Release();
+   // rtvDescriptorHeap->Release();
     // swapChainResources[0]->Release();
     // swapChainResources[1]->Release();
     // swapChain->Release();
     // commandList->Release();
     // commandAllocator->Release();
     // commandQueue->Release();
-    device->Release();
+   // device->Release();
     uesAdapter->Release();
-    dxgiFactory->Release();
+   // dxgiFactory->Release();
     vertexResource->Release();
     graphicsPipelineState->Release();
     signatureBlob->Release();
@@ -1416,7 +1418,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #ifdef _DEBUG
 
-    debugController->Release();
+ //   debugController->Release();
 
 #endif // DEBUG
 
