@@ -35,19 +35,15 @@ bool WinApp::ProcessMessage()
         return true;
     }
 
-
     return false;
-
-
 }
-
 
 void WinApp::Initialize()
 {
 
     CoInitializeEx(0, COINIT_MULTITHREADED);
 
-   // WNDCLASS wc {};
+    // WNDCLASS wc {};
     // ウィンドウプロシージャ
     wc.lpfnWndProc = WindowProc;
     // ウィンドウクラス名
@@ -62,18 +58,14 @@ void WinApp::Initialize()
     // 出力ウィンドウへの文字入力
     OutputDebugStringA("Hello, DirectX!\n");
 
-    
-
     // ウィンドウサイズを表す構造体にクライアント領域を入れる
     RECT wrc = { 0, 0, kClinetWidth, kClineHeigth };
 
     // クライアント領域を元に実際のサイズにwrcを変更してもらう
     AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
-   
-
-      // ウィンドウの作成
-        hwnd = CreateWindow(
+    // ウィンドウの作成
+    hwnd = CreateWindow(
         wc.lpszClassName, // 利用するクラス名
         L"CG2", // タイトルバーの文字
         WS_OVERLAPPEDWINDOW, // ウィンドウスタイル
@@ -86,8 +78,6 @@ void WinApp::Initialize()
         wc.hInstance, // インスタンスハンドル
         nullptr // オプション
     );
-
-    
 
     // ウィンドウを表示する
 

@@ -14,8 +14,8 @@ public:
     static const int32_t kClinetWidth = 1280; // 幅
     static const int32_t kClineHeigth = 720; // 高さ
 
-    HWND GetHwnd()const { return hwnd; }
-    HINSTANCE GetHinstance() const { return wc.hInstance;}
+    HWND GetHwnd() const { return hwnd; }
+    HINSTANCE GetHinstance() const { return wc.hInstance; }
 
     bool ProcessMessage();
 

@@ -7,7 +7,6 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
-
 bool Input::PushKey(BYTE keyNumber)
 {
     if (key[keyNumber]) {
@@ -29,21 +28,17 @@ void Input::Update()
 {
 
     memcpy(keyPre, key, sizeof(key));
-   
+
     // キーボード情報の取得を開始
     keyboard->Acquire();
     // 全キーの入力状態を取得
     keyboard->GetDeviceState(sizeof(key), key);
-
- 
-
 }
 
 void Input::Initialize(WinApp* winApp)
 {
     HRESULT hr;
     this->winApp_ = winApp;
-    
 
     IDirectInput8* directInput = nullptr;
     hr = DirectInput8Create(
@@ -53,7 +48,7 @@ void Input::Initialize(WinApp* winApp)
         (void**)&directInput, nullptr);
     assert(SUCCEEDED(hr));
 
-  //  ComPtr<IDirectInputDevice8> keyboard;
+    //  ComPtr<IDirectInputDevice8> keyboard;
     hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
     assert(SUCCEEDED(hr));
 
@@ -62,6 +57,4 @@ void Input::Initialize(WinApp* winApp)
 
     hr = keyboard->SetCooperativeLevel(winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     assert(SUCCEEDED(hr));
-
 }
-

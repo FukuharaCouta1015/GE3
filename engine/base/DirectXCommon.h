@@ -1,15 +1,14 @@
 #pragma once
 #include "WinApp.h"
+#include <Windows.h>
 #include <array>
+#include <chrono>
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <dxgi1_6.h>
-#include <Windows.h>
+#include <iostream>
 #include <string>
 #include <wrl.h>
-#include <iostream>
-#include <chrono>
-
 
 #pragma comment(lib, "dxcompiler.lib")
 #pragma comment(lib, "d3d12.lib")
@@ -18,13 +17,13 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 
-
-
 class DirectXCommon {
 public:
     void Initialize(WinApp* winApp);
 
-  //  static DirectXCommon* GetInstance();
+    //  static DirectXCommon* GetInstance();
+
+    ID3D12RootSignature* GetRootSignature() const { return rootSignature_.Get(); }
 
     static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t index, uint32_t descriptorSize);
 
@@ -39,7 +38,8 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
     // getter
-    ID3D12Device* GetDevice()const { return device_.Get(); }
+    ID3D12Device* GetDevice() const { return device_.Get(); }
+
     ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
     void PreDraw();
@@ -70,6 +70,8 @@ private:
 
     void UpdateFixFPS();
 
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
+
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
     Microsoft::WRL::ComPtr<ID3D12Device> device_ = nullptr;
@@ -85,8 +87,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
 
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
-
- 
 
     Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& image);
 
@@ -112,7 +112,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = nullptr;
-
 
     uint64_t fenceValue = 0;
     HANDLE fenceEvent = nullptr;
