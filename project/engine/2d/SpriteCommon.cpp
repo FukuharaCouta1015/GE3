@@ -1,6 +1,6 @@
 #include "SpriteCommon.h"
 #include <cassert>
-#include <Logger.h>
+#include "Logger.h"
 
 using namespace Logger;
 

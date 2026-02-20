@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <dxgi.h>
 #include <wrl.h>
-#include "project/engine/base/DirectXCommon.h"
+#include "DirectXCommon.h"
 
 class DirectXCommon;
 
