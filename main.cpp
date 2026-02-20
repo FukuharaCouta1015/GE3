@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #include "WinApp.h"
-#include "engine/io/input.h"
+#include "io/input.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/imagui/imgui.h"
 #include "externals/imagui/imgui_impl_dx12.h"

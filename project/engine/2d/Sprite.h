@@ -3,7 +3,7 @@
 #include <string>
 #include <wrl.h>
 
-#include "engine/math/MyMath.h"
+#include "math/MyMath.h"
 #include "externals/DirectXTex/DirectXTex.h"
 
 class SpriteCommon;

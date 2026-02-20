@@ -1,5 +1,5 @@
 #include "Sprite.h"
-#include "Engine/math/MyMath.h"
+#include "math/MyMath.h"
 #include "SpriteCommon.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
