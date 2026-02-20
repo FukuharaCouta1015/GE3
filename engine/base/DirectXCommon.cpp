@@ -18,6 +18,8 @@ using namespace StringUtility;
 
 HRESULT hr = S_OK;
 
+const uint32_t DirectXCommon::kMaxSRVCount = 512;
+
 void DirectXCommon::Initialize(WinApp* winApp)
 {
 
@@ -366,7 +368,7 @@ void DirectXCommon::CreateHeap()
 {
 
     rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-    srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+    srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,kMaxSRVCount, true);
     dsvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
     descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -450,26 +452,6 @@ void DirectXCommon::CreateDXC()
 
 void DirectXCommon::CreateImGui()
 {
-    //// スワップチェーンを生成する
-    // DXGI_SWAP_CHAIN_DESC1 swapChainDesc {};
-    // swapChainDesc.Width = WinApp::kClinetWidth; // 画面の幅,ウィンドウのクライアント領域を同じものにする
-    // swapChainDesc.Height = WinApp::kClineHeigth; // 画面の高さ,ウィンドウのクライアント領域を同じものにする
-    // swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 画面の形式
-    // swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
-    // swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
-    // swapChainDesc.BufferCount = 2; // バッファの数
-    // swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // 　モニターにうつしたら中身を破棄
-
-    //// RTVの設定
-    // D3D12_RENDER_TARGET_VIEW_DESC rtvDesc {};
-    // rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
-    // rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
-
-    //  Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(
-    //    D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, // シェーダーリソースビュー用
-    //    128,
-    //    true); // シェーダーから使う
-
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -635,37 +617,86 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_
 
 Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(const DirectX::TexMetadata& metadata)
 {
+
+     // metadataを基にResourceの設定
     D3D12_RESOURCE_DESC resourceDesc {};
-    resourceDesc.Width = UINT(metadata.width);
-    resourceDesc.Height = UINT(metadata.height);
-    resourceDesc.MipLevels = UINT16(metadata.mipLevels);
-    resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize);
-    resourceDesc.Format = metadata.format; // 深度24ビット, ステンシル8ビット
-    resourceDesc.SampleDesc.Count = 1; // サンプル数は1
-    resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
+    resourceDesc.Width = UINT(metadata.width); // Textureの幅
+    resourceDesc.Height = UINT(metadata.height); // Textureの高さ
+    resourceDesc.MipLevels = UINT16(metadata.mipLevels); // mipmapの数
+    resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize); // 奥行き or 配列Textureの配列数
+    resourceDesc.Format = metadata.format; // TextureのFormat
+    resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
+    resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension); // Textureの次元数。普段使っているのは2次元
 
     D3D12_HEAP_PROPERTIES heapProperties {};
-    heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // デフォルトヒープを使用
+    heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM; // 細かい設定を行う
+    heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK; // WriteBackポリシーでCPUアクセス可能
+    heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0; // プロセッサの近くに配置
 
-    heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-    heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-
-    Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
-    hr = device_->CreateCommittedResource(
-        &heapProperties,
-        D3D12_HEAP_FLAG_NONE,
-        &resourceDesc,
-        D3D12_RESOURCE_STATE_COPY_DEST, // コピー先
-        nullptr,
-        IID_PPV_ARGS(&resource));
+    // Resourceの生成
+    ComPtr<ID3D12Resource> resource = nullptr;
+    HRESULT hr = device_->CreateCommittedResource(
+        &heapProperties, // Heapの設定
+        D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。特になし。
+        &resourceDesc, // Resourceの設定
+        D3D12_RESOURCE_STATE_GENERIC_READ, // 初回のResourceState。Textureは基本読むだけ
+        nullptr, // Clear最適値。使わないのでnullptr
+        IID_PPV_ARGS(&resource)); // 作成するResourceポインタへのポインタ
     assert(SUCCEEDED(hr));
-
     return resource;
+
+
+   // D3D12_RESOURCE_DESC resourceDesc {};
+   // resourceDesc.Width = UINT(metadata.width);
+   // resourceDesc.Height = UINT(metadata.height);
+   // resourceDesc.MipLevels = UINT16(metadata.mipLevels);
+   // resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize);
+   // resourceDesc.Format = metadata.format; // 深度24ビット, ステンシル8ビット
+   // resourceDesc.SampleDesc.Count = 1; // サンプル数は1
+   // resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
+
+   // D3D12_HEAP_PROPERTIES heapProperties {};
+   // heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // デフォルトヒープを使用
+
+   ///* heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+   // heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;*/
+
+   // Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
+   // hr = device_->CreateCommittedResource(
+   //     &heapProperties,
+   //     D3D12_HEAP_FLAG_NONE,
+   //     &resourceDesc,
+   //     D3D12_RESOURCE_STATE_COPY_DEST, // コピー先
+   //     nullptr,
+   //     IID_PPV_ARGS(&resource));
+   // assert(SUCCEEDED(hr));
+
+   // return resource;
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages)
+void DirectXCommon::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages)
 {
-    std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+    const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+
+    // 全MipMapについて
+    for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+
+        // MipMapレベルを指定して各Imageを取得
+        const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+
+        // Textureに転送
+        HRESULT hr = texture->WriteToSubresource(
+            UINT(mipLevel),
+            nullptr, // 全領域へコピー
+            img->pixels, // データアドレス
+            UINT(img->rowPitch), // 1ラインサイズ
+            UINT(img->slicePitch) // 1枚サイズ
+        );
+        assert(SUCCEEDED(hr));
+    }
+   
+
+ /*   std::vector<D3D12_SUBRESOURCE_DATA> subresources;
     DirectX::PrepareUpload(device_.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
 
     uint64_t intermediateSize = GetRequiredIntermediateSize(texture.Get(), 0, static_cast<UINT>(subresources.size()));
@@ -681,8 +712,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::UploadTextureData(Microsof
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
     barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
     commandList_->ResourceBarrier(1, &barrier);
-
-    return intermediate;
+    */
 }
 
 DirectX::ScratchImage DirectXCommon::LoadTexture(const std::string filePath)

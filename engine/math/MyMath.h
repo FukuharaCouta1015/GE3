@@ -1,21 +1,34 @@
-
 #pragma once
+
+
+namespace MyMath {
+
 struct Matrix4x4 {
 
     float m[4][4];
 };
-/*
+
 struct Vector2
 {
-        float x;
-        float y;
-};*/
+        float x, y;
+    void operator+=(const Vector2& other)
+    {
+        x += other.x;
+        y += other.y;
+        //return *this;
+    }
+};
 
 struct Vector3 {
     float x, y, z;
 };
 
-namespace MatrixMath {
+struct Vector4 {
+    float x, y, z, w;
+};
+
+
+
 // 行列の加法
 Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
 // 行列の減法

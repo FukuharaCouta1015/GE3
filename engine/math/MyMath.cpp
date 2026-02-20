@@ -1,14 +1,13 @@
-
 #define _USE_MATH_DEFINES
-#include "Matrix4x4.h"
+#include "MyMath.h"
 #include <cassert>
 #include <cmath>
 #include <math.h>
 
-using namespace MatrixMath;
+using namespace MyMath;
 
 // 行列の加法
-Matrix4x4 MatrixMath::Add(const Matrix4x4& m1, const Matrix4x4& m2)
+Matrix4x4 MyMath::Add(const Matrix4x4& m1, const Matrix4x4& m2)
 {
     Matrix4x4 result = {};
 
@@ -21,7 +20,7 @@ Matrix4x4 MatrixMath::Add(const Matrix4x4& m1, const Matrix4x4& m2)
     return result;
 }
 // 行列の減法
-Matrix4x4 MatrixMath::Subtract(const Matrix4x4& m1, const Matrix4x4& m2)
+Matrix4x4 MyMath::Subtract(const Matrix4x4& m1, const Matrix4x4& m2)
 {
     Matrix4x4 result = {};
 
@@ -33,7 +32,7 @@ Matrix4x4 MatrixMath::Subtract(const Matrix4x4& m1, const Matrix4x4& m2)
     return result;
 }
 // 4x4行列の積
-Matrix4x4 MatrixMath::Multipty(const Matrix4x4& m1, const Matrix4x4& m2)
+Matrix4x4 MyMath::Multipty(const Matrix4x4& m1, const Matrix4x4& m2)
 {
     Matrix4x4 result;
 
@@ -49,7 +48,7 @@ Matrix4x4 MatrixMath::Multipty(const Matrix4x4& m1, const Matrix4x4& m2)
     return result;
 }
 // 4x4行列の逆行列
-Matrix4x4 MatrixMath::Inverse(const Matrix4x4& m)
+Matrix4x4 MyMath::Inverse(const Matrix4x4& m)
 {
     float aug[4][8] = {};
     for (int row = 0; row < 4; row++) {
@@ -106,7 +105,7 @@ Matrix4x4 MatrixMath::Inverse(const Matrix4x4& m)
     return result;
 }
 // 転置行列
-Matrix4x4 MatrixMath::Transpoce(const Matrix4x4& m)
+Matrix4x4 MyMath::Transpoce(const Matrix4x4& m)
 {
     Matrix4x4 result = {};
 
@@ -119,7 +118,7 @@ Matrix4x4 MatrixMath::Transpoce(const Matrix4x4& m)
     return result;
 }
 // 単位行列の作成
-Matrix4x4 MatrixMath::MakeIdentity4x4()
+Matrix4x4 MyMath::MakeIdentity4x4()
 {
     Matrix4x4 result = {};
 
@@ -130,7 +129,7 @@ Matrix4x4 MatrixMath::MakeIdentity4x4()
 }
 
 // 平行移動行列
-Matrix4x4 MatrixMath::MakeTranslate(const Vector3& translate)
+Matrix4x4 MyMath::MakeTranslate(const Vector3& translate)
 {
 
     Matrix4x4 result = {};
@@ -147,7 +146,7 @@ Matrix4x4 MatrixMath::MakeTranslate(const Vector3& translate)
     return result; // 完成した平行移動を返す
 }
 // 拡大縮小行列
-Matrix4x4 MatrixMath::MakeScale(const Vector3& scale)
+Matrix4x4 MyMath::MakeScale(const Vector3& scale)
 {
 
     Matrix4x4 result = {};
@@ -161,7 +160,7 @@ Matrix4x4 MatrixMath::MakeScale(const Vector3& scale)
 }
 
 // X軸の回転行列
-Matrix4x4 MatrixMath::MakeRotateX(float radian)
+Matrix4x4 MyMath::MakeRotateX(float radian)
 {
 
     Matrix4x4 result = {};
@@ -176,7 +175,7 @@ Matrix4x4 MatrixMath::MakeRotateX(float radian)
     return result; // X軸の回転行列を返す
 }
 // Y軸の回転行列
-Matrix4x4 MatrixMath::MakeRotateY(float radian)
+Matrix4x4 MyMath::MakeRotateY(float radian)
 {
 
     Matrix4x4 result = {};
@@ -191,7 +190,7 @@ Matrix4x4 MatrixMath::MakeRotateY(float radian)
     return result; // Y軸の回転行列を返す
 }
 // Z軸の回転行列
-Matrix4x4 MatrixMath::MakeRotateZ(float radian)
+Matrix4x4 MyMath::MakeRotateZ(float radian)
 {
 
     Matrix4x4 result = {};
@@ -206,7 +205,7 @@ Matrix4x4 MatrixMath::MakeRotateZ(float radian)
     return result; // Z軸の回転行列を返す
 }
 // 3次元アフィン変換行列
-Matrix4x4 MatrixMath::MakeAffine(const Vector3& scale, const Vector3& rotate, const Vector3& translate)
+Matrix4x4 MyMath::MakeAffine(const Vector3& scale, const Vector3& rotate, const Vector3& translate)
 {
 
     Matrix4x4 result = {};
@@ -231,7 +230,7 @@ Matrix4x4 MatrixMath::MakeAffine(const Vector3& scale, const Vector3& rotate, co
     return result;
 }
 // 正射影行列
-Matrix4x4 MatrixMath::Orthographic(float left, float top, float right, float bottom, float nearClip, float farClip)
+Matrix4x4 MyMath::Orthographic(float left, float top, float right, float bottom, float nearClip, float farClip)
 {
 
     Matrix4x4 result = {};
@@ -247,7 +246,7 @@ Matrix4x4 MatrixMath::Orthographic(float left, float top, float right, float bot
     return result;
 }
 // 透視投影行列
-Matrix4x4 MatrixMath::PerspectiveFov(float fovY, float aspectRatio, float nearClip, float farClip)
+Matrix4x4 MyMath::PerspectiveFov(float fovY, float aspectRatio, float nearClip, float farClip)
 {
 
     Matrix4x4 result = {};
@@ -265,7 +264,7 @@ Matrix4x4 MatrixMath::PerspectiveFov(float fovY, float aspectRatio, float nearCl
     return result;
 }
 // ビューポート変換行列
-Matrix4x4 MatrixMath::Viewport(float left, float top, float width, float height, float minDepth, float maxDepth)
+Matrix4x4 MyMath::Viewport(float left, float top, float width, float height, float minDepth, float maxDepth)
 {
 
     Matrix4x4 result = {};
@@ -281,7 +280,7 @@ Matrix4x4 MatrixMath::Viewport(float left, float top, float width, float height,
     return result;
 }
 // クロス積
-Vector3 MatrixMath::Cross(const Vector3& v1, const Vector3& v2)
+Vector3 MyMath::Cross(const Vector3& v1, const Vector3& v2)
 {
     return Vector3(
         v1.y * v2.z - v1.z * v2.y,

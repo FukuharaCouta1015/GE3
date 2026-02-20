@@ -19,6 +19,12 @@
 
 class DirectXCommon {
 public:
+    ~DirectXCommon() {
+        if (fenceEvent) {
+            CloseHandle(fenceEvent);
+        }
+    }
+
     void Initialize(WinApp* winApp);
 
     //  static DirectXCommon* GetInstance();
@@ -46,6 +52,12 @@ public:
     void PostDraw();
     Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
     Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+
+     Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& image);
+
+    static DirectX::ScratchImage LoadTexture(const std::string filePath);
+    void UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> textureResource, const DirectX::ScratchImage& mipImages);
+    static const uint32_t kMaxSRVCount ;
 
 private:
     void CreateDevice();
@@ -87,12 +99,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
 
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
-
-    Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& image);
-
-    Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> textureResource, const DirectX::ScratchImage& mipImages);
-
-    static DirectX::ScratchImage LoadTexture(const std::string filePath);
 
     // Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
 

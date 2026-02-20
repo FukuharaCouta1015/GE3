@@ -137,8 +137,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
+    <ClCompile Include="engine\2d\TextureManager.cpp" />
     <ClCompile Include="engine\base\DirectXCommon.cpp" />
-    <ClCompile Include="engine\base\Matrix4x4.cpp" />
+    <ClCompile Include="engine\math\MyMath.cpp" />
     <ClCompile Include="externals\imagui\imgui.cpp" />
     <ClCompile Include="externals\imagui\imgui_demo.cpp" />
     <ClCompile Include="externals\imagui\imgui_draw.cpp" />
@@ -170,9 +171,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
+    <ClInclude Include="engine\2d\TextureManager.h" />
     <ClInclude Include="engine\base\DirectXCommon.h" />
-    <ClInclude Include="engine\base\Matrix4x4.h" />
     <ClInclude Include="engine\base\VertexData.h" />
+    <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="externals\imagui\imconfig.h" />
     <ClInclude Include="externals\imagui\imgui.h" />
     <ClInclude Include="externals\imagui\imgui_impl_dx12.h" />
