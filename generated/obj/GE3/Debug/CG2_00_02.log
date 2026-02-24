@@ -2,6 +2,10 @@
   SpriteCommon.cpp
   TextureManager.cpp
   DirectXCommon.cpp
+  Logger.cpp
+  StringUtility.cpp
+  winApp.cpp
+  input.cpp
   MyMath.cpp
   imgui.cpp
   imgui_demo.cpp
@@ -10,11 +14,8 @@
   imgui_impl_win32.cpp
   imgui_tables.cpp
   imgui_widgets.cpp
-  input.cpp
-  Logger.cpp
   main.cpp
-  StringUtility.cpp
-  winApp.cpp
+  LINK : 前回のインクリメンタル リンクで C:\Users\k024g\OneDrive\デスクトップ\GE3\project\..\generated\outputs\Debug\GE3.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
   CG2_00_02.vcxproj -> C:\Users\k024g\OneDrive\デスクトップ\GE3\generated\outputs\Debug\GE3.exe
           1 個のファイルをコピーしました。
           1 個のファイルをコピーしました。
