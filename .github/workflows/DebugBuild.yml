@@ -4,31 +4,29 @@ on:
   push:
     branches:
       - master
-      - main  
-#ここに書き足した
+
 env:
   SOLUTION_FILE_PATH: project/CG2_00_02.sln
   CONFIGURATION: Debug
+  PLATFORM: x64
 
 jobs:
   build:
     runs-on: windows-2022
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive 
 
-      - name: Add MSBuild to PATH
+      - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
 
-      
-      - name: Restore NuGet Packages
-        run: msbuild ${{env.SOLUTION_FILE_PATH}} /t:Restore
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore
+        run: nuget restore "${{ env.SOLUTION_FILE_PATH }}"
 
       - name: Build
-        run: |
-          msbuild ${{env.SOLUTION_FILE_PATH}} /p:Platform=x64,Configuration=${{env.CONFIGURATION}}
+        run: msbuild "${{ env.SOLUTION_FILE_PATH }}" /m /p:Configuration=${{ env.CONFIGURATION }} /p:Platform=${{ env.PLATFORM }}
