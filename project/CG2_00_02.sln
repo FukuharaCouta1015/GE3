@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "..\..\CG3\externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj", "{371B9FA9-4C90-4AC6-A123-ACED756D6C77}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj", "{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,18 +25,18 @@ Global
 		{DEC8B122-D266-4844-8550-B1550585C227}.Development|x64.Build.0 = Development|x64
 		{DEC8B122-D266-4844-8550-B1550585C227}.Release|x64.ActiveCfg = Release|x64
 		{DEC8B122-D266-4844-8550-B1550585C227}.Release|x64.Build.0 = Release|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x64.ActiveCfg = Debug|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x64.Build.0 = Debug|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Development|x64.ActiveCfg = Development|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Development|x64.Build.0 = Development|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.ActiveCfg = Release|x64
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.Build.0 = Release|x64
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}.Debug|x64.ActiveCfg = Debug|x64
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}.Debug|x64.Build.0 = Debug|x64
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}.Development|x64.ActiveCfg = Development|x64
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}.Development|x64.Build.0 = Development|x64
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}.Release|x64.ActiveCfg = Release|x64
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{371B9FA9-4C90-4AC6-A123-ACED756D6C77} = {2022CB0F-8BAF-F49E-0C48-8EF4C96EC109}
+		{73229C5D-CD2B-4EBE-9040-CA74A245AF1F} = {2022CB0F-8BAF-F49E-0C48-8EF4C96EC109}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E2F0A00-5DD2-4E45-84C5-B5BB61DAD7CB}
