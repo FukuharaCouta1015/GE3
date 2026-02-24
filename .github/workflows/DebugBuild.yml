@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  SOLUTION_FILE_PATH: project/CG2_00_02.sln
+  SOLUTION_FILE_PATH: project/GE3.sln
   CONFIGURATION: Debug
   PLATFORM: x64
 
